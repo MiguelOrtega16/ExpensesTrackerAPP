@@ -1,0 +1,26 @@
+<div class="page-wrapper" [ngClass]="{'toggled' : getSideBarState()}">
+    <app-sidebar></app-sidebar>
+    <main class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <h2> <i class="fa fa-search-dollar" aria-hidden="true" style="width: 70px;"></i> Expenses Log Tracker <a href="#" class="btn btn-outline-secondary mr-1 mb-1 f-right" (click)="toggleSidebar()">Toggle Sidebar</a></h2>
+                    <hr>
+                    <p>This platform will let you have a record of the money you and your family/friends have spent in something</p>
+                    <hr>
+
+
+                </div>
+            </div>
+            <!-- Log Entry Table Component -->
+            <div class="row">
+                <div class="col-md-12">
+                    <app-log-entry></app-log-entry>
+                </div>
+            </div>
+        </div>
+        <div class="overlay" (click)="toggleSidebar()" [ngClass]="{'show' : !getSideBarState()}"></div>
+    </main>
+
+    <!-- <a href="https://github.com/azouaoui-med/angular-pro-sidebar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a> -->
+</div>

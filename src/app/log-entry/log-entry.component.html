@@ -1,0 +1,137 @@
+<button class="btn btn-secondary f-right my-2 btn-sm" (click)="AddOrEditOrderItem(1, 1)"> Add New Record</button>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
+
+    <!-- Item Column -->
+    <ng-container matColumnDef="item">
+        <th mat-header-cell *matHeaderCellDef> Item </th>
+        <td mat-cell *matCellDef="let element"> {{element.product.name}} </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Area Column -->
+    <ng-container matColumnDef="area">
+        <th mat-header-cell *matHeaderCellDef> Area </th>
+        <td mat-cell *matCellDef="let element"><span [ngClass]="getAreaColor(element.product.area.color)"> {{element.product.area.description}}</span></td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Category Column -->
+    <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef> Category </th>
+        <td mat-cell *matCellDef="let element"> <span [ngClass]="getAreaColor(element.product.category.color)">{{element.product.category.description}}</span> </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.date | date:'dd/MM/yyyy'}} </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Total Column -->
+    <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef> Total </th>
+        <td mat-cell *matCellDef="let element"> {{element.total | currency }} </td>
+        <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
+    </ng-container>
+
+    <!-- Splitted Column -->
+    <ng-container matColumnDef="issplitted">
+        <th mat-header-cell class="no-white-space" *matHeaderCellDef> Is Splitted? </th>
+        <td mat-cell *matCellDef="let element"> {{element.splitted == 1 ? 'Yes' : 'No'}} </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Who Paid Column -->
+    <ng-container matColumnDef="whopaid">
+        <th mat-header-cell class="no-white-space" *matHeaderCellDef> Paid By </th>
+        <td mat-cell *matCellDef="let element"> {{element.whoPaid.nickName}} </td>
+        <td mat-footer-cell *matFooterCellDef> Total </td>
+    </ng-container>
+
+    <!-- Notes Column -->
+    <ng-container matColumnDef="notes">
+        <th mat-header-cell *matHeaderCellDef> Notes </th>
+        <td mat-cell *matCellDef="let element"> {{element.notes}} </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Receipt Column -->
+    <ng-container matColumnDef="receipt">
+        <th mat-header-cell class="text-center" *matHeaderCellDef> Receipt </th>
+        <td mat-cell class="text-center" *matCellDef="let element"><i class="fa fa-paperclip" aria-hidden="true"></i></td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+        <th mat-header-cell class="text-center" *matHeaderCellDef> Status </th>
+        <td mat-cell class="text-center" *matCellDef="let element">
+            <span title="Not everyone has paid this item" *ngIf="!isPaymentCompleted(element)" class="badge badge-danger">Not Paid</span>
+            <span title="Everyone has paid this item" *ngIf="isPaymentCompleted(element)" class="badge badge-success">Paid</span></td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+    <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+            <div class="item-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                <div class="item-element-diagram">
+                    <!-- <div class="item-element-position text-center">
+                        <span>{{element.description}}</span>
+                    </div> -->
+                    <div class="row text-center">
+                        <div class="col-sm-4">
+                            <div class="col-sm-12">
+                                <i class="fa fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="col-sm-12">
+                                <i class="fa fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="col-sm-12">
+                                <span style="font-weight: bold;">Paid</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngFor="let detail of element.expensesLogDetail">
+                        <div class="row text-center">
+                            <div class="col-sm-4">
+                                <div class="col-sm-12">
+                                    <span>{{detail.user.nickName}}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+
+                                <div class="col-sm-12">
+                                    <span>{{detail.value | currency}}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+
+                                <div class="col-sm-12">
+                                    <i *ngIf="detail.isPaid === 1 ? true : false" class="fas fa-check green"></i>
+                                    <i *ngIf="detail.isPaid === 0 ? true : false" class="fas fa-times red"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="item-element-row" [class.item-expanded-row]="expandedElement === element" (click)="expandedElement = expandedElement === element ? null : element">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="item-detail-row"></tr>
+    <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+
+</table>

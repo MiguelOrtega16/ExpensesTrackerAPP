@@ -1,0 +1,150 @@
+<h4 class="dispaly-4">Add new Entry</h4>
+<hr />
+<form [formGroup]="newEntryForm" #f="ngForm" ngNativeValidate (ngSubmit)="f.form.valid && onSubmit()" *ngIf="itemsList">
+    <div class="form-row">
+        <div class="form-group col-sm-6">
+            <label>Paid By</label>
+            <select *ngIf="userService.UserDataArr" class="form-control" placeholder="Select who's paying..." aria-label="Number" formControlName="whoPaidId">
+        <option
+          *ngFor="let usr of userService.UserDataArr"
+          [value]="usr.userId"
+          >{{ usr.nickName }}</option
+        >
+      </select>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="form-group">
+                <label>Date</label>
+                <div class="input-group">
+                    <input class="form-control" placeholder="dd-mm-yyyy" [options]="myOptions" (dateSelect)="onDateSelect($event)" name="dp" formControlName="date" angular-mydatepicker #dp="angular-mydatepicker" [ngClass]="{ 'is-invalid': f.submitted && date.invalid }" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-secondary" (click)="dp.clearDate()">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-secondary" (click)="dp.toggleCalendar()">
+                        <i class="far fa-calendar-alt"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="f.submitted && date.errors" class="invalid-feedback">
+                        <div *ngIf="date.errors.required">Date is required</div>
+                        <div *ngIf="date.errors.invalidDateFormat">Date format is invalid</div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Product</label>
+            <input class="form-control" placeholder="Select a product..." aria-label="Number" [formControl]="myControl" [matAutocomplete]="auto" [ngClass]="{ 'is-invalid': f.submitted && productId.invalid }" />
+            <div *ngIf="f.submitted && productId.invalid" class="invalid-feedback">
+                <div *ngIf="productId.errors.required">Product is required</div>
+            </div>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProductChange($event)" [displayWith]="displayFn">
+                <mat-option *ngFor="let item of filteredOptions" [value]="item">
+                    {{ item.name }}
+                </mat-option>
+            </mat-autocomplete>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="form-group">
+                <label>Total</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">$</div>
+                    </div>
+                    <input type="text" appNumbersOnly name="total" formControlName="total" class="form-control" (change)="UpdateSplittedValues()" required />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="form-group">
+                <label>Area</label>
+                <div class="input-group">
+                    <input name="areaName" formControlName="areaName" class="form-control" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <div class="form-group">
+                <label>Category</label>
+                <div class="input-group">
+                    <input name="categoryName" formControlName="categoryName" class="form-control" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-12 d-flex">
+            <div class="input-group text-center d-block">
+                <mat-checkbox name="splitted" formControlName="splitted" (change)="getSplittedUsers()">Is Splitted?</mat-checkbox>
+                <mat-radio-group *ngIf="this.splitted.value" name="splitType" aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="splitMode" (change)="UpdateSplittedValues()">
+                    <mat-radio-button class="example-radio-button" value="evenly">
+                        Evenly
+                    </mat-radio-button>
+                    <mat-radio-button class="example-radio-button" value="custom">
+                        Customized
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <!-- Splitted Form Group -->
+        <div formGroupName="splitGroup" class="form-group col-sm-12 d-contents">
+            <input type="hidden" formControlName="splitTotal" name="splitTotal">
+            <div formArrayName="usersSplitted" *ngIf="this.splitted.value" class="form-group col-sm-12 d-flex">
+                <div class="form-group col-sm-6">
+                    <label>Split between</label>
+                    <div class="input-group my-2" *ngFor="
+                      let usr of this.usrsSplitted.controls
+                      let i = index;">
+                        <div [formGroupName]="i" class="input-group">
+                            <input class="form-control" [(value)]="usr.value.nickName" formControlName="nickName" aria-label="text" readonly />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <mat-checkbox name="isShared" formControlName="checked" (change)="UpdateSplittedValues()"></mat-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>Total</label>
+                    <div class="input-group my-2" *ngFor="let usr of this.usrsSplitted.controls; let i = index">
+                        <div [formGroupName]="i" class="input-group">
+                            <input class="form-control" appNumbersOnly aria-label="Number" formControlName="totalSplit" [ngClass]="{ 'is-invalid':  splitTotal.invalid }" (change)="updateSplitTotal()" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    $
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div *ngIf="splitTotal.invalid" class="invalid-feedback d-contents">
+                        <div>The amount isn't correctly splitted</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Splitted Form Group End -->
+        <div class="form-group col-sm-12">
+            <div class="form-group">
+                <label>Description</label>
+                <div class="input-group">
+                    <input name="description" formControlName="description" [ngClass]="{ 'is-invalid': f.submitted && description.invalid }" class="form-control" />
+                    <div *ngIf="f.submitted && description.invalid" class="invalid-feedback">
+                        <div *ngIf="description.errors.required">Description is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-12">
+        <button class="btn btn-secondary f-right" type="submit">Submit</button>
+    </div>
+</form>
