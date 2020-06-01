@@ -118,7 +118,7 @@ export class LogEntryNewRecordComponent implements OnInit {
       areaName: new FormControl("", []),
       categoryName: new FormControl(""),
       date: new FormControl(null, [Validators.required]),
-      splitted: new FormControl(""),
+      splitted: new FormControl(null),
       splitMode: new FormControl("custom"),
       total: new FormControl("0", [
         Validators.required,
@@ -134,7 +134,6 @@ export class LogEntryNewRecordComponent implements OnInit {
     });
 
     this.itemService.getItems().subscribe((res) => {
-      console.log(this.itemsList);
       this.itemsList = res as Array<Items>;
     });
 
@@ -157,16 +156,18 @@ export class LogEntryNewRecordComponent implements OnInit {
     );
   }
 
-  displayFn(item: Items): string {
-    if (item !== null) return item.name;
-    else return;
-  }
-
   private getProductFilteredOptions() {
     this.myControl.valueChanges.subscribe((newValue) => {
       this.filteredOptions = this._filter(newValue);
     });
   }
+
+  displayFn(item: Items): string {
+    if (item !== null) return item.name;
+    else return;
+  }
+
+
 
   setDefaultFormValues() {
     let d: Date = new Date();
@@ -181,19 +182,6 @@ export class LogEntryNewRecordComponent implements OnInit {
       whoPaidId: this.userService.UserDataArr[0].userId.toString(),
       date: model,
     });
-  }
-
-  setDate(): void {
-    // Set today date using the patchValue function
-    let model: IMyDateModel = {
-      isRange: false,
-      singleDate: { jsDate: new Date() },
-      dateRange: null,
-    };
-    this.newEntryForm.patchValue({ myDate: model });
-  }
-
-  onDateSelect($event) {
   }
 
   onProductChange($event) {
@@ -292,16 +280,9 @@ export class LogEntryNewRecordComponent implements OnInit {
 
   onSubmit() {
     // TODO: Use EventEmitter with form value
-
     this.submitted = true;
-
-    let test = new EntryLog();
-
-    console.log(JSON.stringify(this.newEntryForm.value));
-
-
-    this.entryLogService.saveEntryRecord(this.newEntryForm.value).subscribe((res) => {
-     console.log(res);
+    this.entryLogService.saveEntryRecord(this.newEntryForm.value).subscribe((res : any) => {
+     this.dialogRef.close(res.value);
     });
 
 

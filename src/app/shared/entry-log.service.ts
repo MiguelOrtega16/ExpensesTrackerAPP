@@ -19,8 +19,6 @@ export class EntryLogService {
   }
 
   saveEntryRecord(formData ){
-
-    console.log("lo que va a enviar");
     return this.http.post(this.rootUrl + '/ExpensesLogs', formData);
   }
 }

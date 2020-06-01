@@ -36,7 +36,7 @@ import { ItemsService } from './shared/items.service';
 import { UsersService } from './shared/users.service';
 import { UtilitiesService } from './shared/utilities.service';
 import { NumbersOnlyDirective } from './shared/directives/numeric.directive';
-import { MatCheckboxModule, MatRadioModule } from '@angular/material';
+import { MatCheckboxModule, MatRadioModule, MatSortModule } from '@angular/material';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -72,7 +72,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MatAutocompleteModule,
     MatInputModule,
     AngularMyDatePickerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSortModule
   ],
   providers: [ {
     provide: PERFECT_SCROLLBAR_CONFIG,

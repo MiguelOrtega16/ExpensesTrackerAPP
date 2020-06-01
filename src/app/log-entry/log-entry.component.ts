@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ɵConsole } from "@angular/core";
 import { EntryLog } from "../shared/entry-log.model";
 import { EntryLogService } from "../shared/entry-log.service";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
@@ -11,6 +11,8 @@ import {
 } from "@angular/animations";
 import { LogEntryNewRecordComponent } from "./log-entry-new-record/log-entry-new-record.component";
 import { AreaCategoryEnumColors } from "../shared/enums/area-category-enum.model";
+import { MatTable, MatSort, MatTableDataSource } from '@angular/material';
+import { UtilitiesService } from '../shared/utilities.service';
 
 @Component({
   selector: "app-log-entry",
@@ -29,30 +31,128 @@ import { AreaCategoryEnumColors } from "../shared/enums/area-category-enum.model
 })
 export class LogEntryComponent implements OnInit {
   displayedColumns: string[] = [
-    "whopaid",
-    "item",
+    "whoPaid.nickName",
+    "product.name",
     "date",
-    "area",
-    "category",
+    "product.area.description",
+    "product.category.description",
     "total",
-    "issplitted",
+    "splitted",
     "notes",
     "receipt",
     "status",
   ];
-  dataSource: any;
+  filterValues = {};
+  dataSource = new MatTableDataSource<EntryLog>();
   expandedElement: any | null;
+  filterSelectObj = [];
+
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatTable, { static: false }) logTable: MatTable<any>;
+
 
   constructor(
     private entryLogService: EntryLogService,
+    private utilServices : UtilitiesService,
     private dialog: MatDialog
-  ) {}
+  ) {
+
+    this.filterSelectObj = [
+      {
+        name: 'Paid By',
+        columnProp: 'whoPaid.nickName',
+        options: []
+      }, {
+        name: 'Item Name',
+        columnProp: 'product.name',
+        options: []
+      }, {
+        name: 'Date',
+        columnProp: 'date',
+        options: []
+      }, {
+        name: 'Area',
+        columnProp: 'product.area.description',
+        options: []
+      }, {
+        name: 'Category',
+        columnProp: 'product.category.description',
+        options: []
+      }, {
+        name: 'Total',
+        columnProp: 'total',
+        options: []
+      }, {
+        name: 'Splitted?',
+        columnProp: 'splitted',
+        options: []
+      }, {
+        name: 'Status',
+        columnProp: 'status',
+        options: []
+      }
+    ]
+  }
 
   ngOnInit() {
+    this.dataSource.filterPredicate = this.utilServices.createFilter();
     this.entryLogService.getExpensesLogRecords().subscribe((res) => {
       console.log(res as Array<EntryLog>);
-      this.dataSource = res as Array<EntryLog>;
+      this.dataSource.data = res as Array<EntryLog>;
+      this.filterSelectObj.filter((o) => {
+        o.options = this.getFilterObject(res, o.columnProp);
+      });
     });
+  }
+
+  ngAfterViewInit() {
+    this.setSorteableColumns();
+    this.dataSource.sort = this.sort;
+  }
+
+
+  filterChange(filter, event) {
+    //let filterValues = {}
+    this.filterValues[filter.columnProp] = event.target.value.trim().toLowerCase()
+    this.dataSource.filter = JSON.stringify(this.filterValues)
+  }
+
+
+
+    // Reset table filters
+    resetFilters() {
+      this.filterValues = {}
+      this.filterSelectObj.forEach((value, key) => {
+        value.modelValue = undefined;
+      })
+      this.dataSource.filter = "";
+    }
+
+    // Get Uniqu values from columns to build filter
+    getFilterObject(fullObj, key) {
+      console.log("filterobject");
+      const uniqChk = [];
+      fullObj.filter((obj) => {
+        let objValue = this.utilServices.fetchFromObject(obj, key);
+        if (!uniqChk.includes(objValue)) {
+          uniqChk.push(objValue);
+        }
+        return obj;
+      });
+      return uniqChk;
+    }
+
+  setSorteableColumns(){
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch(property) {
+        case 'product.name': return item.product.name;
+        case 'whoPaid.nickName' : return item.whoPaid.nickName;
+        case 'product.area.description': return item.product.area.description;
+        case 'product.category.description': return item.product.category.description;
+        default: return item[property];
+
+      }
+    };
   }
 
   isPaymentCompleted(logEntry: any): boolean {
@@ -65,7 +165,7 @@ export class LogEntryComponent implements OnInit {
 
   getTotalCost() {
     if (this.dataSource !== undefined)
-      return this.dataSource
+      return this.dataSource.data
         .map((t) => t.total)
         .reduce((acc, value) => acc + value, 0);
     else return 0;
@@ -80,13 +180,16 @@ export class LogEntryComponent implements OnInit {
     this.dialog
       .open(LogEntryNewRecordComponent, dialogConfig)
       .afterClosed()
-      .subscribe((res) => {
-        this.getTotalCost();
+      .subscribe((newExpensesLog) => {
+        if(newExpensesLog != undefined){
+          this.dataSource.data.push(newExpensesLog);
+          console.log( this.dataSource);
+          this.logTable.renderRows();
+        }
       });
   }
 
   getAreaColor(color) {
-    console.log("asd");
     switch (color) {
       case AreaCategoryEnumColors.Azul:
         return "badge badge-pill badge-primary";
