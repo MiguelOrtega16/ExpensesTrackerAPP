@@ -23,14 +23,14 @@ import { EntryLog } from 'src/app/shared/entry-log.model';
 function splitTotalValidator() {
 
   return (formGroup: FormGroup) => {
-    const control = formGroup.get('splitGroup.splitTotal');
-    const matchingControl = formGroup.get('total');
+    const splitTotal = formGroup.get('splitGroup.splitTotal');
+    const totalPagado = formGroup.get('total');
 
-    if (control.value !==null && (isNaN(control.value) || control.value >= matchingControl.value)) {
-      control.setErrors({ splitTotalValidator: true });
+    if (splitTotal.value !==null && (isNaN(splitTotal.value) || splitTotal.value >= totalPagado.value)) {
+      splitTotal.setErrors({ splitTotalValidator: true });
 
     } else {
-      control.setErrors(null);
+      splitTotal.setErrors(null);
 
     }
 }
@@ -265,11 +265,12 @@ export class LogEntryNewRecordComponent implements OnInit {
   //#endregion
   updateSplitTotal(){
     var totalSplit = 0;
-    this.usrsSplitted.value.forEach((element) => {
-      if (element.checked) {
-        totalSplit +=  +(+element.totalSplit).toFixed(2).replace(/\.00$/, "");
+    this.usrsSplitted.value.forEach((user) => {
+      if (user.checked) {
+        totalSplit +=  +(+user.totalSplit).toFixed(2).replace(/\.00$/, "");
       }
     });
+
 
     this.splitTotal.patchValue(Math.round(totalSplit));
     this.totalValue = totalSplit;

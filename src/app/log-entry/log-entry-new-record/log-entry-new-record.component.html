@@ -16,7 +16,7 @@
             <div class="form-group">
                 <label>Date</label>
                 <div class="input-group">
-                    <input class="form-control" placeholder="dd-mm-yyyy" [options]="myOptions" (dateSelect)="onDateSelect($event)" name="dp" formControlName="date" angular-mydatepicker #dp="angular-mydatepicker" [ngClass]="{ 'is-invalid': f.submitted && date.invalid }" />
+                    <input class="form-control" placeholder="dd-mm-yyyy" [options]="myOptions" name="dp" formControlName="date" angular-mydatepicker #dp="angular-mydatepicker" [ngClass]="{ 'is-invalid': f.submitted && date.invalid }" />
                     <div class="input-group-append">
                         <button type="button" class="btn btn-secondary" (click)="dp.clearDate()">
                         <i class="fas fa-times"></i>

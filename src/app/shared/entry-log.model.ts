@@ -23,6 +23,8 @@ export class EntryLog {
 
   public notes: string;
 
+  public status: number;
+
   public product: Items;
 
   public whoPaid: Users;

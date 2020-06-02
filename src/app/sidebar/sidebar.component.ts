@@ -40,6 +40,13 @@ export class SidebarComponent implements OnInit {
     }
   }
 
+  toggleSideBar(menuClicked){
+    if(menuClicked.submenus)
+    return ;
+    else
+    this.sidebarservice.toggle();
+  }
+
   getState(currentMenu) {
 
     if (currentMenu.active) {

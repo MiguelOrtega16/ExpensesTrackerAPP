@@ -15,8 +15,25 @@ export class SidebarService {
       title: 'Expenses Log',
       icon: 'fa fa-tachometer-alt',
       active: false,
+      type: '',
+      route : '/expenses'
+    },
+    {
+      title: 'Settlement',
+      icon: 'fa fa-calculator',
+      active: false,
       type: 'dropdown',
-      route : 'expenses'
+      route: '/expenses',
+      submenus: [
+        {
+          title: 'Miguel',
+          route : 'settlement/user/1'
+        },
+        {
+          title: 'Cata',
+          route : 'settlement/user/2'
+        },
+      ]
     },
     {
       title: 'Items',

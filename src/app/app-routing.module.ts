@@ -3,6 +3,8 @@ import { Routes, RouterModule } from "@angular/router";
 import { ItemsComponent } from "./items/items.component";
 import { ItemComponent } from "./item/item.component";
 import { AppComponent } from "./app.component";
+import { SettlementComponent } from './settlement/settlement.component';
+import { LogEntryComponent } from './log-entry/log-entry.component';
 
 const routes: Routes = [
   {
@@ -11,19 +13,25 @@ const routes: Routes = [
   },
   {
     path: "expenses",
-    component: AppComponent,
+    component: LogEntryComponent,
   },
-  { path: "items",
-    component: ItemsComponent
+  { path: "settlement",
+  component: SettlementComponent
   },
-  {
-    path: "", redirectTo: "/", pathMatch: "full"
-  },
+  { path: '',  redirectTo: '/expenses', pathMatch: 'full' },
+
   {
     path: "item",
     children: [
       { path: "", component: ItemComponent },
       { path: "edit/:id", component: ItemComponent },
+    ],
+  },
+  {
+    path: "settlement",
+    children: [
+      { path: "", component: SettlementComponent },
+      { path: "user/:id", component: SettlementComponent },
     ],
   },
 ];

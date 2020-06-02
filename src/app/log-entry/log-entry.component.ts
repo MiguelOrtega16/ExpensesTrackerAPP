@@ -11,13 +11,15 @@ import {
 } from "@angular/animations";
 import { LogEntryNewRecordComponent } from "./log-entry-new-record/log-entry-new-record.component";
 import { AreaCategoryEnumColors } from "../shared/enums/area-category-enum.model";
+import { EntryLogStatusEnum } from "../shared/enums/entry-log-status-enum.model";
 import { MatTable, MatSort, MatTableDataSource } from '@angular/material';
 import { UtilitiesService } from '../shared/utilities.service';
+import { FilterEntryLogTableComponent } from '../shared/filter-entry-log-table/filter-entry-log-table.component';
 
 @Component({
   selector: "app-log-entry",
   templateUrl: "./log-entry.component.html",
-  styleUrls: ["./log-entry.component.css"],
+  styleUrls: ["./log-entry.component.scss"],
   animations: [
     trigger("detailExpand", [
       state("collapsed", style({ height: "0px", minHeight: "0" })),
@@ -42,11 +44,12 @@ export class LogEntryComponent implements OnInit {
     "receipt",
     "status",
   ];
-  filterValues = {};
   dataSource = new MatTableDataSource<EntryLog>();
   expandedElement: any | null;
   filterSelectObj = [];
+  entryLogStatusEnum = EntryLogStatusEnum;
 
+  @ViewChild(FilterEntryLogTableComponent, {static: false}) filterEntryLog: FilterEntryLogTableComponent;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatTable, { static: false }) logTable: MatTable<any>;
 
@@ -63,24 +66,12 @@ export class LogEntryComponent implements OnInit {
         columnProp: 'whoPaid.nickName',
         options: []
       }, {
-        name: 'Item Name',
-        columnProp: 'product.name',
-        options: []
-      }, {
-        name: 'Date',
-        columnProp: 'date',
-        options: []
-      }, {
         name: 'Area',
         columnProp: 'product.area.description',
         options: []
       }, {
         name: 'Category',
         columnProp: 'product.category.description',
-        options: []
-      }, {
-        name: 'Total',
-        columnProp: 'total',
         options: []
       }, {
         name: 'Splitted?',
@@ -95,52 +86,20 @@ export class LogEntryComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataSource.filterPredicate = this.utilServices.createFilter();
     this.entryLogService.getExpensesLogRecords().subscribe((res) => {
       console.log(res as Array<EntryLog>);
       this.dataSource.data = res as Array<EntryLog>;
       this.filterSelectObj.filter((o) => {
-        o.options = this.getFilterObject(res, o.columnProp);
+        o.options = this.filterEntryLog.getFilterObject(res, o.columnProp);
       });
     });
   }
 
   ngAfterViewInit() {
+    this.dataSource.filterPredicate = this.filterEntryLog.createFilter();
     this.setSorteableColumns();
     this.dataSource.sort = this.sort;
   }
-
-
-  filterChange(filter, event) {
-    //let filterValues = {}
-    this.filterValues[filter.columnProp] = event.target.value.trim().toLowerCase()
-    this.dataSource.filter = JSON.stringify(this.filterValues)
-  }
-
-
-
-    // Reset table filters
-    resetFilters() {
-      this.filterValues = {}
-      this.filterSelectObj.forEach((value, key) => {
-        value.modelValue = undefined;
-      })
-      this.dataSource.filter = "";
-    }
-
-    // Get Uniqu values from columns to build filter
-    getFilterObject(fullObj, key) {
-      console.log("filterobject");
-      const uniqChk = [];
-      fullObj.filter((obj) => {
-        let objValue = this.utilServices.fetchFromObject(obj, key);
-        if (!uniqChk.includes(objValue)) {
-          uniqChk.push(objValue);
-        }
-        return obj;
-      });
-      return uniqChk;
-    }
 
   setSorteableColumns(){
     this.dataSource.sortingDataAccessor = (item, property) => {

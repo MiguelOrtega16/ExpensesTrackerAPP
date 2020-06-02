@@ -1,0 +1,14 @@
+<div class="row">
+    <div class="col-sm-4 col-lg-3" *ngFor="let filter of FilterSelectObj">
+        <mat-label>Filter {{filter.name}}</mat-label>
+        <div class="options-sel">
+            <select name="{{filter.columnProp}}" [(ngModel)]="filter.modelValue" (change)="filterChange(filter,$event)">
+    <option  value="">-- Select {{filter.name}} --</option>
+    <option  [value]="item" *ngFor="let item of filter.options">{{item}}</option>
+</select>
+        </div>
+    </div>
+
+</div>
+&nbsp;
+<button class="btn btn-warning f-left my-2 btn-sm" (click)="resetFilters()">Reset</button>
