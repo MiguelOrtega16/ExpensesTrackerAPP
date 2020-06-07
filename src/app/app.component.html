@@ -2,25 +2,7 @@
     <app-sidebar></app-sidebar>
     <main class="page-content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="form-group col-md-12">
-                    <h2> <i class="fa fa-search-dollar" aria-hidden="true" style="width: 30px;"></i> Expenses Log Tracker
-                        <button class="navbar-toggler navbar-dark bg-dark f-right" type="button" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleSidebar()">    <span class="navbar-toggler-icon"></span>
-                      </button>
-                    </h2>
-                    <hr>
-                    <p>This platform will let you have a record of the money you and your family/friends have spent in something</p>
-                    <hr>
-
-
-                </div>
-            </div>
-            <!-- Log Entry Table Component -->
-            <div class="row">
-                <div class="col-md-12">
-                    <router-outlet></router-outlet>
-                </div>
-            </div>
+            <router-outlet></router-outlet>
         </div>
         <div class="overlay" (click)="toggleSidebar()" [ngClass]="{'show' : !getSideBarState()}"></div>
     </main>

@@ -100,6 +100,7 @@ export class LogEntryNewRecordComponent implements OnInit {
     return this.newEntryForm.get("splitMode");
 
   }
+
   ngOnInit() {
     this.InitializeDefaults();
     this.getProductFilteredOptions();

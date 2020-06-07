@@ -39,6 +39,8 @@ import { NumbersOnlyDirective } from './shared/directives/numeric.directive';
 import { MatCheckboxModule, MatRadioModule, MatSortModule } from '@angular/material';
 import { SettlementComponent } from './settlement/settlement.component';
 import { FilterEntryLogTableComponent } from './shared/filter-entry-log-table/filter-entry-log-table.component';
+import { PageDescriptionDetailsComponent } from './page-descrition-details/page-description-details.component';
+import { ChangeSettlementStatusComponent } from './change-settlement-status/change-settlement-status.component';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -56,7 +58,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     LogEntryNewRecordComponent,
     NumbersOnlyDirective,
     SettlementComponent,
-    FilterEntryLogTableComponent
+    FilterEntryLogTableComponent,
+    PageDescriptionDetailsComponent,
+    ChangeSettlementStatusComponent
   ],
   imports: [
     BrowserModule,
@@ -88,7 +92,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   UtilitiesService,
   UsersService,
   ],
-  entryComponents: [LogEntryNewRecordComponent],
+  entryComponents: [LogEntryNewRecordComponent, ChangeSettlementStatusComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

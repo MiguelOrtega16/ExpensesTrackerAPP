@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ɵConsole } from "@angular/core";
+import { Component, OnInit, ViewChild, ɵConsole, DebugElement } from "@angular/core";
 import { EntryLog } from "../shared/entry-log.model";
 import { EntryLogService } from "../shared/entry-log.service";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
@@ -21,13 +21,10 @@ import { FilterEntryLogTableComponent } from '../shared/filter-entry-log-table/f
   templateUrl: "./log-entry.component.html",
   styleUrls: ["./log-entry.component.scss"],
   animations: [
-    trigger("detailExpand", [
-      state("collapsed", style({ height: "0px", minHeight: "0" })),
-      state("expanded", style({ height: "*" })),
-      transition(
-        "expanded <=> collapsed",
-        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
-      ),
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
+      state('expanded', style({ height: '*', visibility: 'visible' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
@@ -44,14 +41,21 @@ export class LogEntryComponent implements OnInit {
     "receipt",
     "status",
   ];
-  dataSource = new MatTableDataSource<EntryLog>();
-  expandedElement: any | null;
-  filterSelectObj = [];
+
+  isExpansionDetailRow = (i: number, row: Object) => true;
+  expandedElement: any;
+
   entryLogStatusEnum = EntryLogStatusEnum;
+
+  dataSource : MatTableDataSource<EntryLog>;
+  filterSelectObj = [];
+
+  title = 'Expenses Tracker APP';
+  description = 'This platform will let you have a record of the money you and your family/friends have spent in something';
 
   @ViewChild(FilterEntryLogTableComponent, {static: false}) filterEntryLog: FilterEntryLogTableComponent;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
-  @ViewChild(MatTable, { static: false }) logTable: MatTable<any>;
+  @ViewChild(MatTable, { static: false }) logTable: MatTable<EntryLog>;
 
 
   constructor(
@@ -59,33 +63,11 @@ export class LogEntryComponent implements OnInit {
     private utilServices : UtilitiesService,
     private dialog: MatDialog
   ) {
-
-    this.filterSelectObj = [
-      {
-        name: 'Paid By',
-        columnProp: 'whoPaid.nickName',
-        options: []
-      }, {
-        name: 'Area',
-        columnProp: 'product.area.description',
-        options: []
-      }, {
-        name: 'Category',
-        columnProp: 'product.category.description',
-        options: []
-      }, {
-        name: 'Splitted?',
-        columnProp: 'splitted',
-        options: []
-      }, {
-        name: 'Status',
-        columnProp: 'status',
-        options: []
-      }
-    ]
+    this.setFilterObject();
   }
 
   ngOnInit() {
+    this.dataSource = new MatTableDataSource<EntryLog>();
     this.entryLogService.getExpensesLogRecords().subscribe((res) => {
       console.log(res as Array<EntryLog>);
       this.dataSource.data = res as Array<EntryLog>;
@@ -141,8 +123,9 @@ export class LogEntryComponent implements OnInit {
       .afterClosed()
       .subscribe((newExpensesLog) => {
         if(newExpensesLog != undefined){
-          this.dataSource.data.push(newExpensesLog);
-          console.log( this.dataSource);
+          var data = this.dataSource.data;
+          data.push(newExpensesLog);
+          this.dataSource.data = data;
           this.logTable.renderRows();
         }
       });
@@ -167,5 +150,32 @@ export class LogEntryComponent implements OnInit {
       default:
         return "badge badge-pill badge-primary";
     }
+  }
+
+
+  setFilterObject(){
+    this.filterSelectObj = [
+      {
+        name: 'Paid By',
+        columnProp: 'whoPaid.nickName',
+        options: []
+      }, {
+        name: 'Area',
+        columnProp: 'product.area.description',
+        options: []
+      }, {
+        name: 'Category',
+        columnProp: 'product.category.description',
+        options: []
+      }, {
+        name: 'Splitted?',
+        columnProp: 'splitted',
+        options: []
+      }, {
+        name: 'Status',
+        columnProp: 'status',
+        options: []
+      }
+    ]
   }
 }

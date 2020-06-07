@@ -1,3 +1,5 @@
+<app-page-description-details [SectionTitle]="this.title" [SectionDescription]="this.description">
+</app-page-description-details>
 <!-- Log Entry Table Component -->
 <div class="row">
     <div class="col-md-12">
@@ -39,7 +41,7 @@
             <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header="total"> Total </th>
                 <td mat-cell *matCellDef="let element"> $ {{element.total | number }} </td>
-                <td mat-footer-cell *matFooterCellDef> $ {{getTotalCost() | number}} </td>
+                <td mat-footer-cell *matFooterCellDef> $ {{this.filterEntryLog.getTotalCost() | number}} </td>
             </ng-container>
 
             <!-- Splitted Column -->

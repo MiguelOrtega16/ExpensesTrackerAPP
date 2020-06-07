@@ -1,1 +1,78 @@
-<p>settlement works!</p>
+<app-page-description-details [SectionTitle]="this.title" [SectionDescription]="this.description">
+</app-page-description-details>
+<!-- Settlement Table Component -->
+<div class="row">
+    <div class="col-md-12">
+        <app-filter-entry-log-table #filterEntryLog [FilterSelectObj]="this.filterSelectObj" [TableDataSource]="this.dataSource"></app-filter-entry-log-table>
+
+        <div *ngIf="this.selection.selected.length > 0" class="col-sm-3">
+            <button class="btn btn-outline-dark btn-sm mx-2 my-2" (click)="changeRowStatus()"> <i title="Change the status" class="fas fa-exchange-alt fz-s "></i></button>
+            <button class="btn btn-outline-dark btn-sm mx-2 my-2"> <i title="Add note" class="far fa-edit fz-s "></i></button>
+            <button class="btn btn-outline-dark btn-sm mx-2 my-2"> <i title="Delete" class="far fa-trash-alt fz-s "></i></button>
+        </div>
+        <table mat-table #settlementTable [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+            <!-- Who Owes Column -->
+            <ng-container matColumnDef="nickName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Who Owes </th>
+                <td mat-cell *matCellDef="let element"> {{element.nickName}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <!-- Product Description Column -->
+            <ng-container matColumnDef="itemDescription">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Product Description </th>
+                <td mat-cell *matCellDef="let element"> {{element.itemDescription}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <!-- Entry Description Column -->
+            <ng-container matColumnDef="entryDescription">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Entry Description </th>
+                <td mat-cell *matCellDef="let element"> {{element.entryDescription}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <!-- Date Column -->
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="date"> Date </th>
+                <td mat-cell *matCellDef="let element"> {{element.date | date:'dd/MM/yyyy'}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <!-- Value Column -->
+            <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="value"> Total </th>
+                <td mat-cell *matCellDef="let element"> $ {{element.value | number }} </td>
+                <td mat-footer-cell *matFooterCellDef> $ {{ getTotalCost() | number}} </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell class="text-left" *matHeaderCellDef mat-sort-header> Status </th>
+                <td mat-cell class="text-left" *matCellDef="let element">
+                    <span title="This item hasn't beed paid" *ngIf="element.isPaid == entryLogStatusEnum.NotPaid" class="badge badge-danger">Not Paid</span>
+                    <span title="This item has been paid" *ngIf="element.isPaid == entryLogStatusEnum.Paid" class="badge badge-success">Paid</span>
+                    <span title="This item isn't fully paid" *ngIf="element.isPaid == entryLogStatusEnum.PartialPaid" class="badge badge-warning">Not Fully Paid</span>
+                    <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+                    </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(element) : null; checkSelect(element);" [checked]="selection.isSelected(element)">
+                    </mat-checkbox>
+                </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="item-element-row">
+            </tr>
+            <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+
+        </table>
+    </div>
+</div>

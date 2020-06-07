@@ -11,7 +11,7 @@ import { EntryLog } from '../entry-log.model';
 })
 export class FilterEntryLogTableComponent implements OnInit {
   @Input() FilterSelectObj  : [];
-  @Input() TableDataSource : MatTableDataSource<EntryLog>;
+  @Input() TableDataSource : MatTableDataSource<any>;
 
   filterValues = {};
   entryLogStatusEnum = EntryLogStatusEnum;
@@ -84,9 +84,19 @@ export class FilterEntryLogTableComponent implements OnInit {
      this.TableDataSource.filter = "";
    }
 
+
+  getTotalCost() {
+    console.log("el datasource");
+    console.log(this.TableDataSource);
+    if (this.TableDataSource !== undefined)
+      return this.TableDataSource.filteredData
+        .map((t) => t.total)
+        .reduce((acc, value) => acc + value, 0);
+    else return 0;
+  }
+
    // Get Uniqu values from columns to build filter
    getFilterObject(fullObj, key) {
-     console.log("filterobject");
      const uniqChk = [];
      fullObj.filter((obj) => {
        let objValue = this.utilServices.fetchFromObject(obj, key);

@@ -18,24 +18,36 @@ export class UtilitiesService {
     return sCurrentDate;
   }
 
-
-  fetchFromObject(obj, prop){
+  fetchFromObject(obj, prop) {
     //property not found
-    if(typeof obj === 'undefined') return false;
+    if (typeof obj === "undefined") return false;
 
     //index of next property split
-    var _index = prop.indexOf('.')
+    var _index = prop.indexOf(".");
 
     //property split found; recursive call
-    if(_index > -1){
-        //get object at property (before split), pass on remainder
-        return this.fetchFromObject(obj[prop.substring(0, _index)], prop.substr(_index+1));
+    if (_index > -1) {
+      //get object at property (before split), pass on remainder
+      return this.fetchFromObject(
+        obj[prop.substring(0, _index)],
+        prop.substr(_index + 1)
+      );
     }
 
     //no split; get property
     return obj[prop];
-}
+  }
 
+  convertEnumToArray(enumExp) {
+    const arrayObjects = [];
 
+    for (const [propertyKey, propertyValue] of Object.entries(enumExp)) {
+      if (!Number.isNaN(Number(propertyKey))) {
+        continue;
+      }
+      arrayObjects.push({ id: propertyValue, name: propertyKey });
+    }
 
+    return arrayObjects;
+  }
 }

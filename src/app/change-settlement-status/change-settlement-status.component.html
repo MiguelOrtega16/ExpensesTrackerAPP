@@ -1,0 +1,24 @@
+<h4 class="display-5 text-center">Update Status</h4>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 offset-md-3 text-center">
+            <label>Change To</label>
+            <select class="form-control" [(ngModel)]="currentStatus" placeholder="Change the status to..." aria-label="Number">
+        <option
+          *ngFor="let status of statusOptions"
+          [ngValue]="status.id"
+          >{{ status.name }}</option
+        >
+      </select>
+        </div>
+
+    </div>
+    <div class="row pt-3">
+        <div class="col-sm-12">
+            <button class="btn btn-secondary f-right mx-2" type="button">Cancel</button>
+
+            <button class="btn btn-secondary f-right mx-2" type="button" (click)="updateStatus()">Change</button>
+        </div>
+    </div>
+</div>

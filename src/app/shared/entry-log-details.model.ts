@@ -3,17 +3,17 @@ import { EntryLog } from './entry-log.model';
 
 export class EntryLogDetails {
 
-  public EntryDetailId : number;
+  public entryDetailId : number;
 
-  public LogEntryId : number;
+  public logEntryId : number;
 
-  public UserId : number;
+  public userId : number;
 
-  public Value : number;
+  public value : number;
 
-  public IsPaid : number;
+  public isPaid : number;
 
-  public ExpensesLogData : EntryLog;
+  public expensesLogData : EntryLog;
 
   public UserData : Users;
 

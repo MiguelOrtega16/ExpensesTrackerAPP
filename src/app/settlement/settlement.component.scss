@@ -1,0 +1,33 @@
+table {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.no-white-space {
+    white-space: nowrap !important;
+}
+
+td.mat-cell:first-of-type,
+td.mat-footer-cell:first-of-type,
+th.mat-header-cell:first-of-type {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.mat-column-select {
+    overflow: initial;
+}
+
+.fz-s {
+    font-size: 1.0rem;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-ripple .mat-ripple-element {
+    opacity: 0.03 !important;
+    background-color: #ffc107!important;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #ffc107;
+}
